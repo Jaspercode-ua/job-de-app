@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Вакансии швеи · Нюрнберг</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root {
+    --bg: var(--tg-theme-secondary-bg-color, #f1f2f5);
+    --card: var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, #ffffff));
+    --text: var(--tg-theme-text-color, #16181d);
+    --hint: var(--tg-theme-hint-color, #7a7f8a);
+    --link: var(--tg-theme-link-color, #2a7ae2);
+    --accent: var(--tg-theme-button-color, #2a7ae2);
+    --accent-text: var(--tg-theme-button-text-color, #ffffff);
+    --line: var(--tg-theme-section-separator-color, rgba(127,127,127,.18));
+    --warn: #c77700;
+    --ok: #1f9d55;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not(.tg) {
+      --bg: #101114; --card: #1b1d22; --text: #eceef2; --hint: #8d929c; --link: #6ab0ff; --accent: #3d8ef0;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-text-size-adjust: 100%; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 14px 12px calc(28px + env(safe-area-inset-bottom)); }
+  header h1 { font-size: 20px; margin: 2px 4px 2px; font-weight: 700; letter-spacing: -.01em; }
+  header p { margin: 0 4px 12px; color: var(--hint); font-size: 13px; }
+  .chips { display: flex; gap: 6px; overflow-x: auto; padding: 0 2px 2px; margin: 0 -12px 8px; padding-left: 14px;
+    scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 999px;
+    padding: 6px 12px; font: inherit; font-size: 14px; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); border-color: transparent; }
+  .chip .n { opacity: .65; margin-left: 4px; font-variant-numeric: tabular-nums; }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 4px 10px; }
+  .seg { display: inline-flex; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 2px; }
+  .seg button { border: 0; background: none; color: var(--hint); font: inherit; font-size: 13px; padding: 5px 10px;
+    border-radius: 8px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--bg); color: var(--text); font-weight: 600; }
+  label.toggle { color: var(--hint); font-size: 13px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  label.toggle input { accent-color: var(--accent); margin: 0; }
+  .list { display: flex; flex-direction: column; gap: 8px; }
+  .card { background: var(--card); border-radius: 14px; padding: 12px 14px; border: 1px solid var(--line); }
+  .card.closed { opacity: .55; }
+  .head { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+  .head .main { flex: 1; min-width: 0; }
+  .title { font-weight: 600; font-size: 15.5px; line-height: 1.3; }
+  .emp { color: var(--hint); font-size: 13.5px; margin-top: 2px; overflow-wrap: anywhere; }
+  .chev { color: var(--hint); flex: none; transition: transform .15s; margin-top: 2px; }
+  .card.open .chev { transform: rotate(90deg); }
+  .meta { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 8px; font-size: 13.5px; }
+  .meta span { white-space: nowrap; }
+  .meta .muted { color: var(--hint); }
+  .badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .badge { font-size: 11.5px; font-weight: 600; padding: 2px 7px; border-radius: 6px; background: var(--bg); color: var(--hint); }
+  .badge.new { background: color-mix(in srgb, var(--ok) 16%, transparent); color: var(--ok); }
+  .badge.agency { background: color-mix(in srgb, var(--warn) 16%, transparent); color: var(--warn); }
+  .badge.closed { background: rgba(127,127,127,.18); color: var(--hint); }
+  .details { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .card.open .details { display: block; }
+  dl { margin: 0; display: grid; grid-template-columns: 1fr; gap: 8px; font-size: 14px; }
+  dt { color: var(--hint); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+  dd { margin: 1px 0 0; overflow-wrap: anywhere; }
+  .open-btn { display: block; width: 100%; margin-top: 12px; border: 0; border-radius: 10px; padding: 11px 12px;
+    background: var(--accent); color: var(--accent-text); font: inherit; font-weight: 600; cursor: pointer; text-align: center; }
+  .empty, .msg { text-align: center; color: var(--hint); padding: 40px 16px; }
+  footer { color: var(--hint); font-size: 12px; text-align: center; margin-top: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Вакансии швеи</h1>
+    <p id="sub">Нюрнберг и до 30 км вокруг</p>
+  </header>
+  <div class="chips" id="chips" role="group" aria-label="Направление"></div>
+  <div class="bar">
+    <div class="seg" role="group" aria-label="Сортировка">
+      <button type="button" data-sort="fresh" aria-pressed="true">Свежие</button>
+      <button type="button" data-sort="best" aria-pressed="false">Лучшие</button>
+      <button type="button" data-sort="near" aria-pressed="false">Ближе</button>
+    </div>
+    <label class="toggle" id="closedToggle" hidden><input type="checkbox" id="showClosed"> закрытые</label>
+  </div>
+  <div class="list" id="list"><div class="msg">Загружаю вакансии…</div></div>
+  <footer id="foot">Список обновляется каждое утро.</footer>
+</div>
+<script>
+(function () {
+  "use strict";
+  var tg = window.Telegram && window.Telegram.WebApp;
+  if (tg && tg.initData !== undefined && tg.platform && tg.platform !== "unknown") {
+    document.documentElement.classList.add("tg");
+    try { tg.ready(); tg.expand(); } catch (e) {}
+  }
+
+  var AREAS = [
+    ["Производство", "Производство"],
+    ["Технический текстиль и обивка", "Обивка и техтекстиль"],
+    ["Медицинский текстиль", "Медтекстиль"],
+    ["Ателье и ремонт", "Ателье"],
+    ["Вышивка и печать", "Вышивка"],
+    ["Другое", "Другое"]
+  ];
+  var MONTHS = ["янв", "фев", "мар", "апр", "мая", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
+  var view = { area: "", sort: "fresh", closed: false, open: {} };
+  var jobs = [];
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function shortTitle(t) {
+    return String(t || "Вакансия").replace(/\s*\((?:[mwdfx*]|div(?:ers)?|[\/,|\s])+\)/gi, "").replace(/\s{2,}/g, " ").trim();
+  }
+  function dayRu(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || "");
+    return m ? (+m[3]) + " " + MONTHS[+m[2] - 1] : "";
+  }
+  function daysAgo(iso) {
+    var d = Date.parse((iso || "").slice(0, 10) + "T00:00:00");
+    if (isNaN(d)) return 999;
+    var now = new Date(); now.setHours(0, 0, 0, 0);
+    return Math.round((now - d) / 864e5);
+  }
+  function isClosed(j) { return j.check === "closed"; }
+  function openLink(url) {
+    if (tg && tg.openLink && document.documentElement.classList.contains("tg")) tg.openLink(url);
+    else window.open(url, "_blank", "noopener");
+  }
+  function haptic() { try { tg.HapticFeedback.selectionChanged(); } catch (e) {} }
+
+  function visible() {
+    return jobs.filter(function (j) {
+      return (view.closed || !isClosed(j)) && (!view.area || j.area === view.area);
+    });
+  }
+
+  function renderChips() {
+    var pool = jobs.filter(function (j) { return view.closed || !isClosed(j); });
+    var html = '<button type="button" class="chip" data-area="" aria-pressed="' + (!view.area) + '">Все<span class="n">' + pool.length + "</span></button>";
+    AREAS.forEach(function (a) {
+      var n = pool.filter(function (j) { return j.area === a[0]; }).length;
+      if (n) html += '<button type="button" class="chip" data-area="' + esc(a[0]) + '" aria-pressed="' + (view.area === a[0]) + '">' + esc(a[1]) + '<span class="n">' + n + "</span></button>";
+    });
+    document.getElementById("chips").innerHTML = html;
+  }
+
+  function card(j) {
+    var city = String(j.city || "").split(",")[0].trim() || "город не указан";
+    var km = j.km !== undefined && j.km !== null && j.km !== "" ? "~" + j.km + " км" : "";
+    var badges = "";
+    if (isClosed(j)) badges += '<span class="badge closed">Закрыта</span>';
+    else if (daysAgo(j.found) <= 2) badges += '<span class="badge new">Новая</span>';
+    if (j.agency === "yes") badges += '<span class="badge agency">Через агентство</span>';
+    if (j.type) badges += '<span class="badge">' + esc(j.type) + "</span>";
+
+    var rows = [
+      ["Где", j.city],
+      ["Договор", j.contract],
+      ["Немецкий", j.lang],
+      ["Требования", j.req],
+      ["Как откликнуться", j.apply],
+      ["Опубликована", j.posted],
+      ["Найдена", dayRu(j.found)]
+    ];
+    var dl = rows.filter(function (r) { return r[1]; }).map(function (r) {
+      return "<div><dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd></div>";
+    }).join("");
+
+    return '<article class="card' + (isClosed(j) ? " closed" : "") + (view.open[j.id] ? " open" : "") + '" data-id="' + esc(j.id) + '">' +
+      '<div class="head" role="button" tabindex="0" aria-expanded="' + !!view.open[j.id] + '">' +
+        '<div class="main"><div class="title">' + esc(shortTitle(j.title)) + '</div><div class="emp">' + esc(j.employer) + "</div></div>" +
+        '<svg class="chev" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      "</div>" +
+      '<div class="meta"><span>📍 ' + esc(city) + (km ? ' <span class="muted">' + esc(km) + "</span>" : "") + "</span>" +
+        "<span" + (j.pay ? "" : ' class="muted"') + ">💶 " + esc(j.pay || "зарплата не указана") + "</span></div>" +
+      (badges ? '<div class="badges">' + badges + "</div>" : "") +
+      '<div class="details"><dl>' + dl + "</dl>" +
+        (j.url ? '<button type="button" class="open-btn" data-url="' + esc(j.url) + '">Открыть объявление</button>' : "") +
+      "</div></article>";
+  }
+
+  function render() {
+    renderChips();
+    var list = visible().slice();
+    list.sort(function (a, b) {
+      if (isClosed(a) !== isClosed(b)) return isClosed(a) ? 1 : -1;
+      if (view.sort === "best") return (b.fit || 0) - (a.fit || 0) || String(b.found).localeCompare(String(a.found));
+      if (view.sort === "near") return (a.km == null || a.km === "" ? 999 : a.km) - (b.km == null || b.km === "" ? 999 : b.km);
+      return String(b.found || "").localeCompare(String(a.found || "")) || (b.fit || 0) - (a.fit || 0);
+    });
+    document.getElementById("list").innerHTML = list.length ? list.map(card).join("")
+      : '<div class="empty">Здесь пока пусто.</div>';
+    document.querySelectorAll(".seg button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-sort") === view.sort));
+    });
+  }
+
+  document.getElementById("chips").addEventListener("click", function (e) {
+    var b = e.target.closest(".chip"); if (!b) return;
+    view.area = b.getAttribute("data-area"); haptic(); render();
+  });
+  document.querySelector(".seg").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    view.sort = b.getAttribute("data-sort"); haptic(); render();
+  });
+  document.getElementById("showClosed").addEventListener("change", function (e) {
+    view.closed = e.target.checked; render();
+  });
+  document.getElementById("list").addEventListener("click", function (e) {
+    var btn = e.target.closest(".open-btn");
+    if (btn) { openLink(btn.getAttribute("data-url")); return; }
+    var head = e.target.closest(".head"); if (!head) return;
+    var id = head.parentNode.getAttribute("data-id");
+    view.open[id] = !view.open[id]; haptic(); render();
+  });
+  document.getElementById("list").addEventListener("keydown", function (e) {
+    if ((e.key === "Enter" || e.key === " ") && e.target.classList.contains("head")) { e.preventDefault(); e.target.click(); }
+  });
+
+  fetch("jobs.json?v=" + Date.now(), { cache: "no-store" })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (data) {
+      jobs = (data.jobs || []).filter(function (j) { return j && j.title; });
+      var open = jobs.filter(function (j) { return !isClosed(j); }).length;
+      var closed = jobs.length - open;
+      var upd = data.updated ? new Date(data.updated) : null;
+      document.getElementById("sub").textContent = "Нюрнберг и до 30 км · открытых: " + open +
+        (upd && !isNaN(upd) ? " · обновлено " + upd.getDate() + " " + MONTHS[upd.getMonth()] : "");
+      document.getElementById("closedToggle").hidden = !closed;
+      render();
+    })
+    .catch(function () {
+      document.getElementById("list").innerHTML = '<div class="msg">Не удалось загрузить список. Попробуйте позже.</div>';
+    });
+})();
+</script>
+</body>
+</html>
